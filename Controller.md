@@ -3,8 +3,8 @@
 - add the parameter at the controller method `Index(string id, string name)` // actulize way
 
 # Send data to View 
-## ViewBag
-dynamic property
+## ViewBag 
+dynamic property // don't use because it doesn't provide compile error checking
 - Ex in Controller:
 ```c#
 public ViewResult Index()
@@ -25,7 +25,7 @@ public ViewResult Index()
 ViewBab
 ```
 ## ViewData
-dictionary property
+dictionary property // second best
 - Ex in Controller:
 ```c#
 public ViewResult Index()
@@ -46,7 +46,7 @@ public ViewResult Index()
 ViewBab
 ```
 ## ViewModels
-strongly typed classes
+strongly typed classes // this is best to use 
 - Ex in Controller:
 ```c#
 public ViewResult Index()
