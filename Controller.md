@@ -44,7 +44,7 @@ public ViewResult Index()
 </ul>
 ```
 ## ViewModels
-strongly typed classes // this is best to use 
+strongly typed classes // this is the best to use 
 - Ex in Controller:
 ```c#
 public ViewResult Index()
