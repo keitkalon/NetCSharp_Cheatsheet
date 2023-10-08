@@ -8,6 +8,8 @@
 
 ## Open Close Principle (OCP)
 ### Replacing conditions with inheritance and override methods
+Create an abstract class with a abstract(or virtual) method 
+then for each variant a childclass that override that abstract(or virtual) method.
 Ex without OCP:
 ```C#
 // Does not follow OCP
