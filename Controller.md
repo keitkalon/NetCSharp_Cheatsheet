@@ -22,7 +22,6 @@ public ViewResult Index()
   <li>@contry</li>
 }
 </ul>
-ViewBab
 ```
 ## ViewData
 dictionary property // second best
@@ -43,7 +42,6 @@ public ViewResult Index()
     <li>@country</li>
 }
 </ul>
-ViewBab
 ```
 ## ViewModels
 strongly typed classes // this is best to use 
@@ -55,7 +53,7 @@ public ViewResult Index()
   {
       Countries = new List<string>() { "Andora", "Liechtenstein", "Luxemburg", "Monaco", "Vatican" }
   };
-  return View(viewModel);
+  return View(viewModel); // add model to View
 }
 ```
 - Ex ViewModel class:
