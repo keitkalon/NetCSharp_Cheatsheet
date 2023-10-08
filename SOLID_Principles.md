@@ -21,7 +21,7 @@ public double Area(object[] shapes)
         if (shape is Rectangle)
         {
             Rectangle rectangle = (Rectangle) shape;
-            area += rectangle.Width*rectangle.Height;
+            area += rectangle.Width * rectangle.Height;
         }
         else
         {
@@ -40,7 +40,7 @@ public class AreaCalculator
         double area = 0;
         foreach (var shape in shapes)
         {
-            area += shape.Width*shape.Height;
+            area += shape.Width * shape.Height;
         }
 
         return area;
@@ -63,7 +63,7 @@ public class Rectangle : Shape
     public double Height { get; set; }
     public override double Area()
     {
-        return Width*Height;
+        return Width * Height;
     }
 }
 
@@ -72,7 +72,7 @@ public class Circle : Shape
     public double Radius { get; set; }
     public override double Area()
     {
-        return Radius*Radius*Math.PI;
+        return Radius * Radius * Math.PI;
     }
 }
 
