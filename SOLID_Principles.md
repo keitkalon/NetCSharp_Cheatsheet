@@ -49,6 +49,7 @@ public class AreaCalculator
 vs Ex with OCP:
 
 ```c#
+// Respects OCP
 public abstract class Shape
 {
     public abstract double Area();
