@@ -14,7 +14,7 @@ public class Employee
 ```c#
 public class EmployeeContext : DBContext
 {
-  public DbSet<Employee> Employee { get; set; }
+  public DbSet<Employee> Employees { get; set; }
 }
 ```
 ## Add conection string into Web.config file
@@ -34,7 +34,7 @@ public class MvcAplication : System.Web.HttpApplication
 {
     protected void Aplication_Start()
     {
-        DataBase.SetInitializer<MVCDemo.Models.EmployeeContext>(null); // if it doesn't exist create it
+        DataBase.SetInitializer<ProjectName.Models.EmployeeContext>(null); // if it doesn't exist create it
         AreaRegistration.RegisterAllAreas();
         WebConfig.Register(GlobalConfiguration.Configuration);
         FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
@@ -49,14 +49,14 @@ public class MvcAplication : System.Web.HttpApplication
 public ActionResult Index()
 {
   EmployeeContext employeeContext = new EmployeeContext();
-  List<Employee> employees = employeeContext.Emploees.ToList();
+  List<Employee> employees = employeeContext.Employees.ToList();
   return View(employees);
 }
 
 public ActionResult Details(id)
 {
   EmployeeContext employeeContext = new EmployeeContext();
-  Employee employee = employeeContext.Emploees.firstOrDefault(e => e.id = id);
+  Employee employee = employeeContext.Employees.Single(emp => emp.EmployeeId = id);
   return View(employee);
 }
 ```
@@ -64,11 +64,15 @@ public ActionResult Details(id)
 ## View
 
 ```cshtml
+@model Ienumerable<ProjectName.Models.Employee> // the Model
+
+@using ProjectName.Models; // when you want use other class models
+
 <h2>Employees:</h2>
 <ul>
 @foreach(Employee employee in @model)
 {
-  <li>@Htm.ActionLink(employee.Name, "Details", new { @id = employee.EmployeeId })</li>
+  <li>@Htm.ActionLink(employee.Name, "Details", new { @id = employee.EmployeeId })</li> // `new { @id = employee.EmployeeId })` is what Details action need as parameter to run
 }
 </ul>
 ```
