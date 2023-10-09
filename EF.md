@@ -17,25 +17,7 @@ public class EmployeeContext : DBContext
   public DbSet<Employee> Employees { get; set; }
 }
 ```
-or
-```c#
-public class BookStoreContext : DBContext
-{
-  public BookStoreContext(DbContextOptions<BookStoreContext> options)
-    : base(options)
-  {
 
-  }
-
-  public DbSet<Book> Books { get; set; }
-
-  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-  {
-      optionsBuilder.UseSqlServer(""Server=.; DataBase=Sample; integrated security=true);
-      base.OnConfiguring(optionsBuilder);
-  }
-}
-```
 ## Add conection string into Web.config file
 ```xml
 <conectionString>
@@ -61,7 +43,6 @@ public class MvcAplication : System.Web.HttpApplication
     }
 }
 ```
-
 ## Controller
 
 ```c#
@@ -94,4 +75,36 @@ public ActionResult Details(id)
   <li>@Htm.ActionLink(employee.Name, "Details", new { @id = employee.EmployeeId })</li> // `new { @id = employee.EmployeeId })` is what Details action need as parameter to run
 }
 </ul>
+```
+
+# Alternative
+
+##  Create Context File
+
+```c#
+public class BookStoreContext : DBContext
+{
+  public BookStoreContext(DbContextOptions<BookStoreContext> options)
+    : base(options)
+  {
+
+  }
+
+  public DbSet<Book> Books { get; set; }
+
+  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+  {
+      optionsBuilder.UseSqlServer(""Server=.; DataBase=Sample; integrated security=true);
+      base.OnConfiguring(optionsBuilder);
+  }
+}
+```
+
+## StartUp
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+  services.AddDbContext<BookStoreContext>() // add db context in services
+}
 ```
