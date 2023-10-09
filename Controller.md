@@ -76,7 +76,7 @@ public class CountryViewModel
 </ul>
 ```
 ## Dynamic Decoration with ExpandoObject
-
+Do to dynamic nature of the pattern this variant do not provide compile error checking
 - Ex in Controller:
 ```c#
 public ViewResult GetBook(int id)
