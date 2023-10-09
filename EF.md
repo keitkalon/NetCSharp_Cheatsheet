@@ -17,6 +17,25 @@ public class EmployeeContext : DBContext
   public DbSet<Employee> Employees { get; set; }
 }
 ```
+or
+```c#
+public class BookStoreContext : DBContext
+{
+  public BookStoreContext(DbContextOptions<BookStoreContext> options)
+    : base(options)
+  {
+
+  }
+
+  public DbSet<Book> Books { get; set; }
+
+  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+  {
+      optionsBuilder.UseSqlServer(""Server=.; DataBase=Sample; integrated security=true);
+      base.OnConfiguring(optionsBuilder);
+  }
+}
+```
 ## Add conection string into Web.config file
 ```xml
 <conectionString>
