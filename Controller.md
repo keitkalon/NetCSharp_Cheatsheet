@@ -75,3 +75,15 @@ public class CountryViewModel
 }
 </ul>
 ```
+## Dynamic Decoration with ExpandoObject
+
+- Ex in Controller:
+```c#
+public ViewResult GetBook(int id)
+{
+    dynamic data = new System.Dynamic.ExpandoObject();
+    data.book = _bookRepository.GetBookById(Id);
+    data.Author = _authorRepository.GetAuthor(book.AuthorId);
+    return View(data);
+}
+```
