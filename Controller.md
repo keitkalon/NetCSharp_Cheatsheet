@@ -1,41 +1,73 @@
-# Retrieve QueryString name:
-- `Request.QueryString["name"];` //an old method use also in webforms
-- add the parameter at the controller method `Index(string id, string name)` // actulize way
+# ASP.NET MVC Controllers Cheat Sheet
 
-# Send data to View 
-## ViewBag 
-dynamic property // don't use because it doesn't provide compile error checking
-- Ex in Controller:
-```c#
-public ViewResult Index()
+**Applies to:** ASP.NET MVC 5 (System.Web.Mvc) on .NET Framework 4.x.
+
+> Not for ASP.NET Core — in Core, controller APIs and data passing differ.
+
+---
+
+## Retrieve QueryString Values
+
+* **Legacy (WebForms style, avoid if possible):**
+
+```csharp
+var name = Request.QueryString["name"];
+```
+
+* **Preferred (MVC model binding):**
+
+```csharp
+public ActionResult Index(string id, string name)
 {
-  ViewBag.Countries = new List<string>() { "Andora", "Liechtenstein", "Luxemburg", "Monaco", "Vatican" };
-  return View();
+    // automatically bound from ?id=1&name=John
+    return View();
 }
 ```
-- Ex in View:
-```razor
-<h3>Contries</h3>
-<ul>
-@foreach(string contry in ViewBag.Countries)
+
+---
+
+## Sending Data to Views
+
+### 1. ViewBag
+
+Dynamic property — works but **no compile-time safety**.
+
+```csharp
+public ViewResult Index()
 {
-  <li>@contry</li>
+    ViewBag.Countries = new List<string>() { "Andorra", "Liechtenstein", "Luxembourg", "Monaco", "Vatican" };
+    return View();
+}
+```
+
+View:
+
+```razor
+<h3>Countries</h3>
+<ul>
+@foreach (string country in ViewBag.Countries)
+{
+    <li>@country</li>
 }
 </ul>
 ```
-## ViewData
-dictionary property // second best
-- Ex in Controller:
-```c#
+
+### 2. ViewData
+
+Dictionary-based — slightly better, but still no strong typing.
+
+```csharp
 public ViewResult Index()
 {
-  ViewData["Countries"] = new List<string>() { "Andora", "Liechtenstein", "Luxemburg", "Monaco", "Vatican" };
-  return View();
+    ViewData["Countries"] = new List<string>() { "Andorra", "Liechtenstein", "Luxembourg", "Monaco", "Vatican" };
+    return View();
 }
 ```
-- Ex in View:
+
+View:
+
 ```razor
-<h3>Contries</h3>
+<h3>Countries</h3>
 <ul>
 @foreach (var country in ViewData["Countries"] as List<string>)
 {
@@ -43,31 +75,36 @@ public ViewResult Index()
 }
 </ul>
 ```
-## ViewModels
-strongly typed classes // this is the best to use 
-- Ex in Controller:
-```c#
+
+### 3. ViewModels (Recommended)
+
+Strongly typed class passed to the View.
+
+```csharp
 public ViewResult Index()
 {
-  var viewModel = new CountryViewModel
-  {
-      Countries = new List<string>() { "Andora", "Liechtenstein", "Luxemburg", "Monaco", "Vatican" }
-  };
-  return View(viewModel); // add model to View
+    var viewModel = new CountryViewModel
+    {
+        Countries = new List<string>() { "Andorra", "Liechtenstein", "Luxembourg", "Monaco", "Vatican" }
+    };
+    return View(viewModel);
 }
 ```
-- Ex ViewModel class:
-```c#
+
+ViewModel:
+
+```csharp
 public class CountryViewModel
 {
     public List<string> Countries { get; set; }
 }
 ```
-- Ex in View:
-```razor
 
+View:
+
+```razor
 @model YourNamespace.CountryViewModel
-<h3>Contries</h3>
+<h3>Countries</h3>
 <ul>
 @foreach (var country in Model.Countries)
 {
@@ -75,15 +112,112 @@ public class CountryViewModel
 }
 </ul>
 ```
-## Dynamic Decoration with ExpandoObject
-Do to dynamic nature of the pattern this variant do not provide compile error checking
-- Ex in Controller:
-```c#
+
+### 4. Dynamic Decoration (ExpandoObject)
+
+Provides flexibility but **no compile-time safety**.
+
+```csharp
 public ViewResult GetBook(int id)
 {
     dynamic data = new System.Dynamic.ExpandoObject();
-    data.book = _bookRepository.GetBookById(Id);
+    var book = _bookRepository.GetBookById(id);
+    data.Book = book;
     data.Author = _authorRepository.GetAuthor(book.AuthorId);
     return View(data);
 }
 ```
+
+---
+
+## Useful Extras (What You Might Have Missed)
+
+### TempData
+
+* Persists data between requests (uses session under the hood).
+* Useful for **Redirect → View** scenarios.
+
+```csharp
+public ActionResult Save()
+{
+    TempData["Message"] = "Saved successfully!";
+    return RedirectToAction("Index");
+}
+
+public ActionResult Index()
+{
+    ViewBag.Message = TempData["Message"];
+    return View();
+}
+```
+
+### ActionResult Return Types
+
+* `ViewResult` → returns a view
+* `RedirectToRouteResult` → `RedirectToAction("Index")`
+* `RedirectResult` → `Redirect("/Home/About")`
+* `JsonResult` → `return Json(data, JsonRequestBehavior.AllowGet)`
+* `FileResult` → return files (File, FilePathResult, FileStreamResult)
+* `HttpStatusCodeResult` → e.g. `return new HttpNotFoundResult();`
+
+### Attribute Routing
+
+```csharp
+public class ProductsController : Controller
+{
+    [Route("products/{id:int}")]
+    public ActionResult Details(int id)
+    {
+        // matched from /products/5
+        return View();
+    }
+}
+```
+
+### Model Binding
+
+* Query string, form data, and route values automatically bind to action parameters.
+* For complex types:
+
+```csharp
+public ActionResult Register(UserViewModel model)
+{
+    if (ModelState.IsValid)
+    {
+        // model populated from form
+    }
+    return View(model);
+}
+```
+
+### Model Validation
+
+* Decorate ViewModel with DataAnnotations:
+
+```csharp
+public class UserViewModel
+{
+    [Required]
+    public string Name { get; set; }
+
+    [EmailAddress]
+    public string Email { get; set; }
+}
+```
+
+View:
+
+```razor
+@Html.ValidationMessageFor(m => m.Email)
+```
+
+---
+
+## Best Practices
+
+* Prefer **ViewModels** for strongly typed safety.
+* Use **TempData** only for short-lived data (redirect scenarios).
+* Avoid **ExpandoObject** in production unless truly dynamic.
+* Add **[ValidateAntiForgeryToken]** on POST actions to prevent CSRF.
+* Use **async/await** in controllers for long-running IO (with `Task<ActionResult>`).
+* Keep controllers thin — business logic belongs in services, not controllers.
